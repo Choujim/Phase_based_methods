@@ -47,7 +47,9 @@ currentDirectory = pwd;
 dataDir = 'C:\Users\HIT\Desktop'
 % vidName = 'stc2713-sup-0002-stabilizedvideo_v3';%vidName = 'crabchipsRamp';
 % vidName = 'stc2713-sup-0001-originalvideo_v3';
-vidName = '220115_rainbowbridge\trim_VID_20220115_164248';
+% vidName = '220115_rainbowbridge\trim_VID_20220115_164248';
+% vidName = '220605_彩虹桥_龙珠一路桥\VID_20220605_162741';
+vidName = '220605_彩虹桥_龙珠一路桥\VID_20220605_163141';
 % vidExtension = '.avi';
 vidExtension = '.mp4';
 testcasename = vidName;
@@ -56,7 +58,9 @@ norientations = 4; %orientation of vibration
 dsamplefactor = 1; %downsample to 0.1 full size
 
 % roi = [[262, 288];[247, 273]];   % cable area  
-roi = [[320, 380];[513, 573]];
+% roi = [[320, 380];[513, 573]];
+% roi = [[1390, 1480];[480, 570]]; %VID_20220605_162741
+roi = [[456, 480];[1080, 1104]]; %VID_20220605_163141
 roi2 = [[418,438];[629,649]]; % stable area
 
 filename = [vidName vidExtension];
@@ -75,12 +79,12 @@ olap = 40;
 %%
 % 不同方向的位移强度
 % for k = 0:180;
-%     S = vmSoundFromVideo(vr, nscales, norientations-2, k,'SamplingRate', samplingrate,'DownsampleFactor', dsamplefactor,'ROI', roi,'ROI2',roi2);
+%     S = traverse_angles(vr, nscales, norientations-2, k,'SamplingRate', samplingrate,'DownsampleFactor', dsamplefactor,'ROI', roi,'ROI2',roi2);
 %     amp2freq(k+1)= S.freq_amp;
 %     fprintf(1,'Dgree: %d\nAmp: %f', k, S.freq_amp);
 % end
 S = vmSoundFromVideo(vr, nscales, norientations, 'SamplingRate', samplingrate,'DownsampleFactor', dsamplefactor,'ROI', roi,'ROI2',roi2);
-S.fileName = vidName;
+% S.fileName = vidName;
 
 %For very clean videos (loud sound, good magnification) S will already be
 %enough. Videos with more noise may not be clean enough to hear the result

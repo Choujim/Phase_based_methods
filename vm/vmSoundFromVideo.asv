@@ -76,7 +76,7 @@ stable_refFrame = fullFrame(roi2(1,1)+1:roi2(1,2),roi2(2,1)+1:roi2(2,2));
 [h,w] = size(refFrame);%height and width of video in pixels
 
 % nF = numFramesIn;
-nF = 1800;
+nF = 900;
 if(nF==0)
     %depending on matlab and type of video you are using, may need to read
     %the last frame

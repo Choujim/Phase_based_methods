@@ -2,7 +2,7 @@
 
 function angle = detect_angle(image, scale_total, orientation_total, method)
     % bilinear差分图
-    im = de_background(image, 4);
+    im = de_background(image, 2);
     
     if (method == 0)
         %% 获得各个方向的方向能量等数据

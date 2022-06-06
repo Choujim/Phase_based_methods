@@ -11,7 +11,7 @@
 %%pending on this work.
 
 %%
-function [S] = vmSoundFromVideo(vHandle, nscalesin, norientationsin, varargin)
+function [S] = traverse_angles(vHandle, nscalesin, norientationsin, s_angle, varargin)
 %   Extracts audio from tiny vibrations in video.
 %   Optional argument DownsampleFactor lets you specify some factor to
 %   downsample by to make processing faster. For example, 0.5 will
@@ -75,8 +75,7 @@ refFrame = de_background(refFrame, 2);               %  π”√bilinearƒ£∫˝÷ÿΩ®£®∑«»
 stable_refFrame = fullFrame(roi2(1,1)+1:roi2(1,2),roi2(2,1)+1:roi2(2,2));
 [h,w] = size(refFrame);%height and width of video in pixels
 
-% nF = numFramesIn;
-nF = 1800;
+nF = numFramesIn;
 if(nF==0)
     %depending on matlab and type of video you are using, may need to read
     %the last frame
@@ -132,35 +131,35 @@ for q = 1:nF                  % progress bar
     
     im = fullFrame(roi(1,1)+1:roi(1,2),roi(2,1)+1:roi(2,2));
 %     im = de_background(im, 2); 
-    im2 = fullFrame(roi2(1,1)+1:roi2(1,2),roi2(2,1)+1:roi2(2,2));
+%     im2 = fullFrame(roi2(1,1)+1:roi2(1,2),roi2(2,1)+1:roi2(2,2));
     
-    pyr = buildSCFpyr(im, nScales, nOrients-1);
-    stable_pyr = buildSCFpyr(im2, nScales, nOrients-1);
-    pyrAmp = abs(pyr);
-    pyrDeltaPhase = mod(pi+angle(pyr)-angle(pyrRef), 2*pi) - pi; 
-    stable_pyrDeltaPhase = mod(pi+angle(stable_pyr)-angle(stable_pyrRef), 2*pi) - pi; 
+%     pyr = buildSCFpyr(im, nScales, nOrients-1);
+%     stable_pyr = buildSCFpyr(im2, nScales, nOrients-1);
+%     pyrAmp = abs(pyr);
+%     pyrDeltaPhase = mod(pi+angle(pyr)-angle(pyrRef), 2*pi) - pi; 
+%     stable_pyrDeltaPhase = mod(pi+angle(stable_pyr)-angle(stable_pyrRef), 2*pi) - pi; 
     
     % ◊Ó”≈Ω«∂»◊”¥¯œ‡ŒªœÏ”¶
-    optimal_phase = calculate_phase(im, nscalesin-1, norientationsin, 12/180*pi);
+    optimal_phase = calculate_phase(im, nscalesin-1, norientationsin, s_angle/180*pi);
     anime3(:,q) = optimal_phase;
     
-    for j = 1:nScales
-        bandIdx = 1 + (j-1)*nOrients + 1;
-        curH = pind(bandIdx,1);
-        curW = pind(bandIdx,2);        
-        for k = 1:nOrients
-            bandIdx = 1 + (j-1)*nOrients + k;
-            amp = pyrBand(pyrAmp, pind, bandIdx); %figure; surf(amp); title('Amplitude')
-            phase = pyrBand(pyrDeltaPhase, pind, bandIdx); %figure; surf(phase); title('Delta Phase')
-            phasemap = pyrBand(pyr,pind,bandIdx); %figure; surf(angle(phasemap)); title('Phase')
-            phase2 = pyrBand(stable_pyrDeltaPhase, stable_pind, bandIdx);
-            if (j == 1)
-                anime1(:,:,j,k,q)= phasemap;
-                p_anime1(:,:,j,k,q)= phase;
-            elseif (j == 2)
-                anime2(:,:,j,k,q)= phasemap;  
-                p_anime2(:,:,j,k,q)= phase; 
-            end
+%     for j = 1:nScales
+%         bandIdx = 1 + (j-1)*nOrients + 1;
+%         curH = pind(bandIdx,1);
+%         curW = pind(bandIdx,2);        
+%         for k = 1:nOrients
+%             bandIdx = 1 + (j-1)*nOrients + k;
+%             amp = pyrBand(pyrAmp, pind, bandIdx); %figure; surf(amp); title('Amplitude')
+%             phase = pyrBand(pyrDeltaPhase, pind, bandIdx); %figure; surf(phase); title('Delta Phase')
+%             phasemap = pyrBand(pyr,pind,bandIdx); %figure; surf(angle(phasemap)); title('Phase')
+%             phase2 = pyrBand(stable_pyrDeltaPhase, stable_pind, bandIdx);
+%             if (j == 1)
+%                 anime1(:,:,j,k,q)= phasemap;
+%                 p_anime1(:,:,j,k,q)= phase;
+%             elseif (j == 2)
+%                 anime2(:,:,j,k,q)= phasemap;  
+%                 p_anime2(:,:,j,k,q)= phase; 
+%             end
             % ¥¥Ω®∂Øª≠
 %             if (j == 2)
 %                 if (k == 2)
@@ -170,17 +169,17 @@ for q = 1:nF                  % progress bar
 %                 end
 %             end
             %weighted signals with amplitude square weights. 
-            phasew = phase.*(abs(amp).^2);
-            
-            %sumamp = sum(abs(amp(:)));
-            sumamp = sum(abs(amp(:)).^2);
-            ampsigs(j,k,q)= sumamp;
-            
-            % only using mean values of delta phase here
-            signalffs(j,k,q)=mean(phase(:));%/sumamp;
-            stable_signalffs(j,k,q)=mean(phase2(:));
-        end
-    end    
+%             phasew = phase.*(abs(amp).^2);
+%             
+%             %sumamp = sum(abs(amp(:)));
+%             sumamp = sum(abs(amp(:)).^2);
+%             ampsigs(j,k,q)= sumamp;
+%             
+%             % only using mean values of delta phase here
+%             signalffs(j,k,q)=mean(phase(:));%/sumamp;
+%             stable_signalffs(j,k,q)=mean(phase2(:));
+%         end
+%     end    
 end
 
 %avx is average x
@@ -189,24 +188,24 @@ S.samplingRate = samplingrate;
 signalout = zeros(4,411);
 %%
 % movie(surf(angle(anime1(:,:,1,4,:))),5,15);
-f1 = figure;
-f2 = figure;
+% f1 = figure;
+% f2 = figure;
 %%
-line = animatedline('Color','b');
-xline = [1:1:nF];
+% line = animatedline('Color','r');
+% xline = [1:1:411];
 disp = 0;
 % mask = mask_creator([26,26],2,4,[1,1],0);
-for i = 2:nF
-    vframein = vHandle.read(i);
-    im = vframein(roi(1,1)+1:roi(1,2),roi(2,1)+1:roi(2,2));
+for i = 2:411
+%     vframein = vHandle.read(i);
+%     im = vframein(roi(1,1)+1:roi(1,2),roi(2,1)+1:roi(2,2));
 %     subplot(1,2,1);
-    figure(f1), hold on
-    imshow(im,'InitialMagnification','fit');
+%     figure(f1), hold on
+%     imshow(im,'InitialMagnification','fit');
     
     tdisp = mean(mod(pi+anime3(:,i)-anime3(:,i-1), 2*pi)-pi); % ◊Ó”≈Ω«∂»œ‡Œª
     disp = disp+tdisp; signalout(4,i) = disp;
-    addpoints(line,xline(i),double(disp)); 
-
+%     addpoints(line,xline(i),double(disp)); 
+% 
 %     subplot(1,2,2);
 %     surf(angle(anime1(:,:,1,2,i)) - angle(anime1(:,:,1,2,i-1)));view(0,-90); colorbar;
 %     subplot(1,3,3);
@@ -253,11 +252,11 @@ for i = 2:nF
 %     tdisp = sum(sum(angle(anime1(:,:,1,2,i))-angle(anime1(:,:,1,2,i-1))))/26/19;
 %     tdisp = sum(sum(angle(anime1(:,:,1,2,i-1))))/26/19;
 %     disp = disp+tdisp; signalout(1,i) = disp;
-    figure(f2), %surf(abs(fftshift(fft2(im))));
+%     figure(f2), %surf(abs(fftshift(fft2(im))));
 %     imhist(im); ylim([0, 80]);
 %     addpoints(line,xline(i),double(disp));
 %     drawnow
-    title(['frame:',num2str(i)]);
+%     title(['frame:',num2str(i)]);
 %     colorbar;
 %     view(0,-90);
 %     anime(q)= getframe;
@@ -282,8 +281,8 @@ end
 % S.aligned = sigOut;
 
 % fftspec(S.aligned, samplingrate);
-fftspec(signalout(4,:), samplingrate);
-% S.freq_amp = fftspec(signalout(4,:), samplingrate); return
+% fftspec(signalout(1,:), samplingrate);
+S.freq_amp = base_freq_amp(signalout(4,:), samplingrate); return
 
 %sometimes the alignment aligns on noise and boosts it, in which case just
 %use averaging with no alignment, or highpass before alignment
