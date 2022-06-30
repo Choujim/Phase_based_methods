@@ -30,13 +30,13 @@ function angle = detect_angle(image, scale_total, orientation_total, method)
                 angle_2 = (angle_1 + angle_2)/2;
                 energy_2 = 0;
                 for k = 1:scale_total
-                    energy_2 = energy_2 + f_energy(im, scale_total, orientation_total, [k, angle_2], 1);
+                    energy_2 = energy_2 + f_energy(im, scale_total, orientation_total, [k, angle_2/180*pi], 1);
                 end
             else
                 angle_1 = (angle_1 + angle_2)/2;
                 energy_1 = 0;
                 for k = 1:scale_total
-                    energy_1 = energy_1 + f_energy(im, scale_total, orientation_total, [k, angle_1], 1);
+                    energy_1 = energy_1 + f_energy(im, scale_total, orientation_total, [k, angle_1/180*pi], 1);
                 end
             end
         end
@@ -101,7 +101,17 @@ function angle = detect_angle(image, scale_total, orientation_total, method)
         %%
         angle = angle + mod(H_peaks(2), 180);
        
-        
+    elseif (method == 3)
+        dims = size(im);
+        ctr = ceil((dims+0.5)/2);
+        f_im = fftshift(fft2(image));
+        f_im(ctr(1),ctr(2)) = 0; % 去除直流分量
+        [max_value, max_index] = max(f_im(:));
+        [max_row, max_col] = ind2sub(dims, max_index);
+        angle = atan2(max_row - ctr(1), max_col - ctr(2));
+        if (angle < 0)
+            angle = angle + pi;
+        angle = angle/pi*180;
     end
     
 end
