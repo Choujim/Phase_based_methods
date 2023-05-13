@@ -140,8 +140,9 @@ for q = 1:nF                  % progress bar
 %     stable_pyrDeltaPhase = mod(pi+angle(stable_pyr)-angle(stable_pyrRef), 2*pi) - pi; 
     
     % 最优角度子带相位响应
-    optimal_phase = calculate_phase(im, nscalesin-1, norientationsin, s_angle/180*pi);
+    [optimal_phase, optimal_index, optimal_mask] = calculate_phase(im, nscalesin-1, norientationsin, s_angle/180*pi);
     anime3(:,q) = optimal_phase;
+    anime3_mask(:,q) = optimal_mask;
     
 %     for j = 1:nScales
 %         bandIdx = 1 + (j-1)*nOrients + 1;
@@ -202,7 +203,10 @@ for i = 2:411
 %     figure(f1), hold on
 %     imshow(im,'InitialMagnification','fit');
     
-    tdisp = mean(mod(pi+anime3(:,i)-anime3(:,i-1), 2*pi)-pi); % 最优角度相位
+                                                          % 最优角度相位
+    t_phase = mod(pi+anime3(:,i)-anime3(:,i-1), 2*pi)-pi;
+    t_mask = anime3_mask(:,i) | anime3_mask(:,i-1);
+    tdisp = mean(t_phase(t_mask));
     disp = disp+tdisp; signalout(4,i) = disp;
 %     addpoints(line,xline(i),double(disp)); 
 % 

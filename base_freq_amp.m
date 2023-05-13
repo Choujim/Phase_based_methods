@@ -1,3 +1,4 @@
+%获得基频幅值
 function result = base_freq_amp(signal, samplerate)
 
 sigfft = fft(signal);
@@ -15,6 +16,7 @@ spsd(2 : end-1) = 2*spsd(2 : end-1);
 % xlabel('f (Hz)');
 % ylabel('Power/Hz (W/Hz)');
 
+% 指定输出基频频率处的幅值
 result = spsd(10);
 %% 
 % figure;plot(L2time,signal);

@@ -44,23 +44,31 @@ setPath
 currentDirectory = pwd;
 %dataDir = fullfile('', 'data');%dataDir should be directory to data
 %dataDir = uigetdir();
-dataDir = 'C:\Users\HIT\Desktop'
+% dataDir = 'C:\Users\HIT\Desktop'
 % vidName = 'stc2713-sup-0002-stabilizedvideo_v3';%vidName = 'crabchipsRamp';
 % vidName = 'stc2713-sup-0001-originalvideo_v3';
 % vidName = '220115_rainbowbridge\trim_VID_20220115_164248';
 % vidName = '220605_彩虹桥_龙珠一路桥\VID_20220605_162741';
-vidName = '220605_彩虹桥_龙珠一路桥\VID_20220605_163141';
-% vidExtension = '.avi';
-vidExtension = '.mp4';
+% vidName = '220605_彩虹桥_龙珠一路桥\VID_20220605_163141';
+% vidName = 'supp4-3141110'; % 补充材料supp4
+
+dataDir = 'C:\Users\HIT\Desktop\相位图片'
+vidName = '模拟数据生成_9-0';
+vidExtension = '.avi';
+% vidExtension = '.mp4';
 testcasename = vidName;
 nscales = 2;
 norientations = 4; %orientation of vibration
 dsamplefactor = 1; %downsample to 0.1 full size
 
+% roi = [[259, 291];[244, 276]];
 % roi = [[262, 288];[247, 273]];   % cable area  
-% roi = [[320, 380];[513, 573]];
+% roi = [[330, 370];[523, 563]];
 % roi = [[1390, 1480];[480, 570]]; %VID_20220605_162741
-roi = [[456, 480];[1080, 1104]]; %VID_20220605_163141
+% roi = [[456, 480];[1080, 1104]]; %VID_20220605_163141
+% roi = [[10, 44];[198, 232]]; % 补充材料supp4
+
+roi = [[0, 32];[0, 32]]; % 模拟数据生成_2
 roi2 = [[418,438];[629,649]]; % stable area
 
 filename = [vidName vidExtension];

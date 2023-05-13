@@ -17,7 +17,7 @@ function angle = detect_angle(image, scale_total, orientation_total, method)
             temp_energy = [temp_energy, temp];
         end
         
-        %% 二分法查找最佳匹配角度
+        % 二分法查找最佳匹配角度
         [energy_1, idx_1] = max(temp_energy);
         angle_1 = temp_angles(idx_1);
         temp_energy(idx_1) = [];
@@ -80,38 +80,68 @@ function angle = detect_angle(image, scale_total, orientation_total, method)
 %         f_im = edge(image, 'canny');  % 使用canny检测边缘
 %         angle = -90;
         
-        threshold_amp = mean(f_im(:));
-        threshold_idx = f_im <= threshold_amp; % 逻辑值矩阵
-        % 二值化
-        f_im(threshold_idx) = 0;
-        f_im(~threshold_idx) = 1;
+        [rule_index, threshold] = sort_and_threshold(f_im, 0.50);
+        f_im(rule_index(1:end-threshold)) = 0;
+        f_im(rule_index(end-threshold+1:end)) = 1;
+
+
+%         [rule_val,rule_index] = sort(f_im(:));
+%         threshold = floor(0.6*size(f_im,1));
+%         threshold_amp = f_im(rule_index(end-threshold));disp(threshold_amp);
+%         f_im(rule_index(1:end-threshold)) = 0;
+%         f_im(rule_index(end-threshold+1:end)) = 1;
+
+%         threshold_amp = mean(f_im(:));
+%         threshold_idx = f_im <= threshold_amp; % 逻辑值矩阵
+% %         二值化
+%         f_im(threshold_idx) = 0;
+%         f_im(~threshold_idx) = 1;
         
+        
+        % Hough变换
+        delta_theta = 1.0;
+        sets_angle = -90:delta_theta:(90-delta_theta);
+        [H,T,R] = hough(f_im, 'Theta',sets_angle);
+        H_peaks = houghpeaks(H,2);
+        
+        %% 可视化
+%         lines = houghlines(f_im,T,R,H_peaks,'MinLength',1);
+% %         figure; imshow(f_im), hold on
+%         for k = 1:length(lines)
+%             xy = [lines(k).point1; lines(k).point2];
+%             plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+%         end
+        %% 输出
+%         angle = angle + mod(H_peaks(2), 180);
+        tmp_angle = sets_angle(round(mean(H_peaks(:,2))));
+        angle = angle + round(mod(tmp_angle+90, 180));
+        
+       
+    elseif (method == 3)
+        %% 频谱非极大值抑制
+        dims = size(im);
+        ctr = ceil((dims+0.5)/2);
+        f_im = fftshift(fft2(image));
+        f_im(ctr(1),ctr(2)) = 0; % 去除直流分量
+        [max_value, max_index] = max(abs(f_im(:)));
+        [max_row, max_col] = ind2sub(dims, max_index);
+        angle = atan2(max_row - ctr(1), max_col - ctr(2));
+        if (angle < 0)
+            angle = angle + pi;
+        end
+        angle = angle/pi*180;
+        
+    elseif (method == 4)
+        %% 基础霍夫法
+       % canny边缘检测
+        angle = -90;
+        f_im = edge(image, 'canny');
         
         % Hough变换
         [H,T,R] = hough(f_im);
         H_peaks = houghpeaks(H);
         
-        %% 可视化
-        lines = houghlines(f_im,T,R,H_peaks,'MinLength',1);
-%         figure; imshow(f_im), hold on
-        for k = 1:length(lines)
-            xy = [lines(k).point1; lines(k).point2];
-            plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
-        end
-        %%
         angle = angle + mod(H_peaks(2), 180);
-       
-    elseif (method == 3)
-        dims = size(im);
-        ctr = ceil((dims+0.5)/2);
-        f_im = fftshift(fft2(image));
-        f_im(ctr(1),ctr(2)) = 0; % 去除直流分量
-        [max_value, max_index] = max(f_im(:));
-        [max_row, max_col] = ind2sub(dims, max_index);
-        angle = atan2(max_row - ctr(1), max_col - ctr(2));
-        if (angle < 0)
-            angle = angle + pi;
-        angle = angle/pi*180;
     end
     
 end
