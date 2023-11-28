@@ -8,7 +8,7 @@ function angle = tools_different_detect_angle(image, method)
     
     % 3 -- LSD
     elseif (method == 3)
-%         addpath('C:\Users\HIT\Desktop\Vibration_From_Video\LSD-Matlab_fromOpencvToMEX');
+        addpath('C:\Users\HIT\Desktop\Vibration_From_Video\LSD-Matlab_fromOpencvToMEX');
         lines = mex_lsd(image');
         temp_angle = 0;
         for k = 1:size(lines, 2)
@@ -41,7 +41,7 @@ function angle = tools_different_detect_angle(image, method)
         
     % 4 -- EDlines
     elseif (method == 4)
-%         addpath('C:\Users\HIT\Desktop\Vibration_From_Video\EDlines');
+        addpath('C:\Users\HIT\Desktop\Vibration_From_Video\EDlines');
         lines = mex_edlines(image');
         temp_angle = 0;
 %         size(lines, 2)
@@ -75,10 +75,11 @@ function angle = tools_different_detect_angle(image, method)
         
     % 5 -- 方向能量增强的Hough法检测直线角度
     elseif (method == 5)
-%         angle = detect_angle(image, 2, 4, 2);
+        angle = detect_angle(image, 2, 4, 2);
+        
 %         addpath('C:\Users\HIT\Desktop\Vibration_From_Video\detect_angle_MEX');
-        tmp_angle = mex_detect_angle(image');
-        angle = tmp_angle;
+%         tmp_angle = mex_detect_angle(image');
+%         angle = tmp_angle;
     end
 
 end

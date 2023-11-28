@@ -1,3 +1,4 @@
+data/
 data_r_3
 data_rmse_3
 data_rmse_1
@@ -9,3 +10,6 @@ data_rmse_2
 *.asv
 *.wav
 *.mat
+.DS_Store
+._.*
+原始方法_Jana

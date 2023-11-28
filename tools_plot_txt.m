@@ -1,5 +1,5 @@
-% txtfile = 'D:\Download\ic-shm2021-data_proj3\data_proj3\ground_truth\Damage_multi1\GroundTruthData.txt';
-txtfile = 'D:\Download\ic-shm2021-data_proj3\data_proj3\ground_truth\Damage_small1\GroundTruthData.txt';
+txtfile = 'D:\Download\ic-shm2021-data_proj3\data_proj3\ground_truth\Damage_multi1\GroundTruthData.txt';
+% txtfile = 'D:\Download\ic-shm2021-data_proj3\data_proj3\ground_truth\Damage_small1\GroundTruthData.txt';
 % txtfile = 'D:\Download\ic-shm2021-data_proj3\data_proj3\ground_truth\Damage1\GroundTruthData.txt';
 
 fs = fopen(txtfile);
